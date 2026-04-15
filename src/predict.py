@@ -27,8 +27,6 @@ transform = transforms.Compose([
 ])
 
 
-# FIX: Load per-disease thresholds saved by evaluate.py
-# Falls back to 0.5 for all if the file doesn't exist yet
 try:
     with open("../best_thresholds.json") as f:
         threshold_dict = json.load(f)
@@ -79,8 +77,6 @@ if not detected:
 else:
     print(f"\nDetected: {', '.join([f'{d} ({p:.2f})' for d, p in detected])}")
 
-
-# Grad-CAM on the highest-probability class
 target_class = int(np.argmax(probs))
 print(f"\nGenerating Grad-CAM for: {labels[target_class]} (p={probs[target_class]:.3f})")
 

@@ -12,9 +12,6 @@ import pandas as pd
 import os
 from PIL import Image
 
-# -------------------------
-# Paths
-# -------------------------
 DATA_CSV  = "../archive/Data_Entry_2017.csv"
 DATA_ROOT = "../archive"
 MODEL_PATH = "../best_model.pth"
@@ -75,8 +72,6 @@ def main():
     print(f"Device: {device}")
 
     dataset = ChestXrayDataset(DATA_CSV, DATA_ROOT, val_transform)
-
-    # Use last 10000 as test set
     test_indices = list(range(len(dataset) - 10000, len(dataset)))
     test_dataset = Subset(dataset, test_indices)
     test_loader  = DataLoader(test_dataset, batch_size=8, shuffle=False, num_workers=0)
@@ -102,7 +97,6 @@ def main():
     all_preds  = np.vstack(all_preds)
     all_labels = np.vstack(all_labels)
 
-    # Find best thresholds
     best_thresholds = []
     print("\nPer-disease results:")
     print(f"{'Disease':<22} {'Threshold':>10} {'AUC':>7} {'TP':>5} {'FP':>5} {'FN':>5}")
@@ -127,7 +121,6 @@ def main():
 
         print(f"{disease:<22} {best_t:>10.3f} {auc:>7.3f} {tp:>5} {fp:>5} {fn:>5}")
 
-    # Apply thresholds
     pred_binary = np.zeros_like(all_preds)
     for i in range(len(best_thresholds)):
         pred_binary[:, i] = (all_preds[:, i] > best_thresholds[i]).astype(int)
